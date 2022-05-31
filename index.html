@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule=""
+      src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.js"
+    ></script>
+    <title>STAR WARS</title>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Star Wars</h1>
+        <div class="dynamic-btns"></div>
+      </header>
+      <div class="overlay"><div class="loading">LOADING</div></div>
+      <table class="table"></table>
+      <div class="pagination">
+        <button>Prev</button><input id="page-number" type="number" />
+        <select id="page-size">
+          <option>5</option>
+          <option>10</option>
+          <option>20</option>
+        </select>
+        <button id="next">Next</button>
+      </div>
+      <div class="popup">
+        <div class="content">
+          <span>Are you sure that you want to delete this row?</span>
+          <button class="delete">Yes</button>
+          <button class="do-not-delete">No</button>
+        </div>
+      </div>
+    </div>
+    <script src="script.js" type="module"></script>
+  </body>
+</html>

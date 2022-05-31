@@ -1,0 +1,135 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  background-color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+h1 {
+  text-align: center;
+  color: rgba(255, 251, 0, 0.714);
+  font-size: 3rem;
+}
+.dynamic-btns {
+  margin: 0 auto;
+  max-width: 50vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 1rem;
+}
+.dynamic-btns button {
+  background-color: fff;
+  font-size: 1.5rem;
+  border-radius: 20px;
+  padding: 0.5em;
+}
+.dynamic-btns button:hover {
+  background-color: bisque;
+  cursor: pointer;
+}
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.overlay.active {
+  display: flex;
+  cursor: wait;
+}
+.loading {
+  font-size: 5rem;
+  color: #fff;
+  animation-name: pulse;
+  animation-duration: 1s;
+  animation-direction: normal;
+  animation-iteration-count: infinite;
+}
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+p {
+  color: white;
+}
+.pagination {
+  display: none;
+}
+.pagination.visible {
+  display: block;
+}
+table {
+  max-width: 80%;
+  margin: 2rem auto;
+}
+th {
+  border: 1px solid white;
+  text-transform: uppercase;
+  color: #fff;
+  padding: 1.5em;
+}
+
+td {
+  color: white;
+  border: 1px solid white;
+  padding: 1em;
+}
+ion-icon {
+  font-size: 40px;
+}
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+  display: none;
+}
+.content {
+  background-color: #fff;
+  margin: 15% auto;
+  padding: 20px;
+  border: 3px solid rgba(255, 251, 0, 0.714);
+  border-radius: 10px;
+  width: 20%;
+  color: #000;
+  font-size: 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.delete,
+.do-not-delete {
+  border-radius: 20px;
+  background: #fff;
+  font-size: 1.5rem;
+  text-align: center;
+  cursor: pointer;
+}
+.delete:hover,
+.do-not-delete:hover,
+.delete:focus,
+.do-not-delete:focus {
+  background-color: rgba(0, 0, 0, 0.4);
+}
