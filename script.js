@@ -1,17 +1,26 @@
-window.onload = getBaseUrl;
+window.onload = getData;
 
 const BASE_URL = "https://swapi.dev/api/";
-let currentCategoryData = null;
-let tableData = null;
+let currentCategoryData;
+let tableData;
 let table;
 let category;
+let allResults = [];
+const pageSize = 10;
+let curPage = 1;
 
 async function getBtnNames(category) {
-  const response = await fetch(`${BASE_URL}${category}`);
-  currentCategoryData = await response.json();
+  let url = `${BASE_URL}${category}`;
+  while (url) {
+    const response = await fetch(url);
+    currentCategoryData = await response.json();
+    allResults.push(...currentCategoryData.results);
+    url = currentCategoryData.next;
+  }
+  return allResults;
 }
 
-async function getBaseUrl() {
+async function getData() {
   const response = await fetch(BASE_URL);
   const data = await response.json();
 
@@ -23,25 +32,25 @@ async function getBaseUrl() {
     await getBtnNames(category);
 
     if (category === "people") {
-      tableData = currentCategoryData.results.map(
+      tableData = allResults.map(
         ({ url, name, created, id, gender, birth_year, eye_color }) =>
           new People(url, name, created, id, gender, birth_year, eye_color)
       );
     }
     if (category === "planets") {
-      tableData = currentCategoryData.results.map(
+      tableData = allResults.map(
         ({ url, name, created, id, population, climate, terrain }) =>
           new Planets(url, name, created, id, population, climate, terrain)
       );
     }
     if (category === "films") {
-      tableData = currentCategoryData.results.map(
+      tableData = allResults.map(
         ({ url, name, created, id, director, title, opening_crawl }) =>
           new Films(url, name, created, id, director, title, opening_crawl)
       );
     }
     if (category === "species") {
-      tableData = currentCategoryData.results.map(
+      tableData = allResults.map(
         ({
           url,
           name,
@@ -63,7 +72,7 @@ async function getBaseUrl() {
       );
     }
     if (category === "vehicles") {
-      tableData = currentCategoryData.results.map(
+      tableData = allResults.map(
         ({
           url,
           name,
@@ -85,7 +94,7 @@ async function getBaseUrl() {
       );
     }
     if (category === "starships") {
-      tableData = currentCategoryData.results.map(
+      tableData = allResults.map(
         ({
           url,
           name,
@@ -106,10 +115,11 @@ async function getBaseUrl() {
           )
       );
     }
+
     buildTable();
   };
 
-  Object.entries(data).map(([key, value]) => {
+  Object.entries(data).map(([key]) => {
     const btn = document.createElement("button");
     btn.innerHTML = key.toUpperCase();
     btn.addEventListener("click", btnOnclick);
@@ -117,147 +127,159 @@ async function getBaseUrl() {
   });
 }
 
-function buildTable() {
-  table = document.querySelector(".table");
-  table.innerHTML = "";
-
-  const tr = document.createElement("tr");
-  const th1 = document.createElement("th");
-  th1.innerHTML = "ID";
-  tr.append(th1);
-
-  const th2 = document.createElement("th");
-
-  if (category === "films") {
-    th2.innerHTML = "Title";
+function buildTable(page = 1) {
+  if (page == 1) {
+    prevBtn.style.visibility = "hidden";
   } else {
-    th2.innerHTML = "Name";
+    prevBtn.style.visibility = "visible";
   }
-  tr.append(th2);
 
-  const th3 = document.createElement("th");
-  if (category === "people") {
-    th3.innerHTML = "Birth year";
+  if (page == numPages()) {
+    nextBtn.style.visibility = "hidden";
+  } else {
+    nextBtn.style.visibility = "visible";
   }
-  if (category === "planets") {
-    th3.innerHTML = "Population";
-  }
+  table = "";
+  table += `<th>ID</th>
+  <th>URL</th>`;
   if (category === "films") {
-    th3.innerHTML = "Opening crawl";
+    table += `<th>Title</th>`;
+  } else {
+    table += `<th>Name</th>`;
   }
-  if (category === "species") {
-    th3.innerHTML = "Average lifespan";
-  }
-  if (category === "vehicles" || category === "starships") {
-    th3.innerHTML = "Model";
-  }
-  tr.append(th3);
 
-  const th4 = document.createElement("th");
   if (category === "people") {
-    th4.innerHTML = "Eye color";
+    table += `<th>Birth year</th>`;
   }
+
   if (category === "planets") {
-    th4.innerHTML = "Climate";
+    table += `<th>Population</th>`;
   }
+
   if (category === "films") {
-    th4.innerHTML = "Director";
+    table += `<th>Opening crawl</th>`;
   }
+
   if (category === "species") {
-    th4.innerHTML = "Language";
+    table += `<th>Average lifespan</th>`;
   }
+
   if (category === "vehicles" || category === "starships") {
-    th4.innerHTML = "Passengers";
+    table += `<th>Model</th>`;
   }
-  tr.append(th4);
 
-  const th5 = document.createElement("th");
-  th5.innerHTML = "Url";
-  tr.append(th5);
+  if (category === "people") {
+    table += `<th>Eye color</th>`;
+  }
 
-  const th6 = document.createElement("th");
-  th6.innerHTML = "Created";
-  tr.append(th6);
+  if (category === "planets") {
+    table += `<th>Climate</th>`;
+  }
 
-  const th7 = document.createElement("th");
-  th7.innerHTML = "Delete/Details";
-  tr.append(th7);
+  if (category === "films") {
+    table += `<th>Director</th>`;
+  }
 
-  table.append(tr);
+  if (category === "species") {
+    table += `<th>Language</th>`;
+  }
 
-  tableData.map((item, index) => {
-    const tr = document.createElement("tr");
-    tr.id = `${index + 1}`;
+  if (category === "vehicles" || category === "starships") {
+    table += `<th>Passengers</th>`;
+  }
 
-    const td1 = document.createElement("td");
-    td1.innerHTML = tr.id;
-    tr.append(td1);
+  table += `<th>Created</th>`;
+  table += `<th>Delete/Details</th>`;
 
-    const td2 = document.createElement("td");
-    if (category === "films") {
-      td2.innerHTML = item.title;
-    } else {
-      td2.innerHTML = item.name;
-    }
-    tr.appendChild(td2);
+  const filtered = tableData
+    .filter((row, index) => {
+      let start = (curPage - 1) * pageSize;
+      let end = curPage * pageSize;
+      if (index >= start && index < end) return true;
+    })
+    .forEach((item, index) => {
+      table += "<tr>";
+      table += `<td>${index + 1}</td>`;
+      table += `<td>${item.url}</td>`;
+      if (category === "films") {
+        table += `<td>${item.title}</td>`;
+      } else {
+        table += `<td>${item.name}</td>`;
+      }
 
-    const td3 = document.createElement("td");
-    if (category === "people") {
-      td3.innerHTML = item.birth_year;
-    }
-    if (category === "planets") {
-      td3.innerHTML = item.population;
-    }
-    if (category === "films") {
-      td3.innerHTML = item.opening_crawl;
-    }
-    if (category === "species") {
-      td3.innerHTML = item.average_lifespan;
-    }
-    if (category === "vehicles" || category === "starships") {
-      td3.innerHTML = item.model;
-    }
+      if (category === "people") {
+        table += `<td>${item.birth_year}</td>`;
+      }
 
-    tr.append(td3);
+      if (category === "planets") {
+        table += `<td>${item.population}</td>`;
+      }
 
-    const td4 = document.createElement("td");
-    if (category === "people") {
-      td4.innerHTML = item.eye_color;
-    }
-    if (category === "planets") {
-      td4.innerHTML = item.climate;
-    }
-    if (category === "films") {
-      td4.innerHTML = item.director;
-    }
-    if (category === "species") {
-      td4.innerHTML = item.language;
-    }
-    if (category === "vehicles" || category === "starships") {
-      td4.innerHTML = item.passengers;
-    }
-    tr.append(td4);
+      if (category === "films") {
+        table += `<td>${item.opening_crawl}</td>`;
+      }
 
-    const td5 = document.createElement("td");
-    td5.innerHTML = item.url;
-    tr.append(td5);
+      if (category === "species") {
+        table += `<td>${item.average_lifespan}</td>`;
+      }
 
-    const td6 = document.createElement("td");
-    td6.innerHTML = item.date;
-    tr.append(td6);
+      if (category === "vehicles" || category === "starships") {
+        table += `<td>${item.model}</td>`;
+      }
+      if (category === "people") {
+        table += `<td>${item.eye_color}</td>`;
+      }
 
-    const td7 = document.createElement("td");
-    td7.innerHTML = `<button class="trashBtn"><ion-icon name="trash-outline"></ion-icon></button>
-    <button class="aaa"><ion-icon name="information-circle-outline"></ion-icon></button>`;
-    tr.append(td7);
+      if (category === "planets") {
+        table += `<td>${item.climate}</td>`;
+      }
 
-    table.appendChild(tr);
-    console.log("data", tableData);
-  });
+      if (category === "films") {
+        table += `<td>${item.director}</td>`;
+      }
 
+      if (category === "species") {
+        table += `<td>${item.language}</td>`;
+      }
+
+      if (category === "vehicles" || category === "starships") {
+        table += `<td>${item.passengers}</td>`;
+      }
+      table += `<td>${item.date}</td>`;
+      table += `<td><button class="trashBtn"><ion-icon name="trash-outline"></ion-icon></button>
+       <button class="aaa"><ion-icon name="information-circle-outline"></ion-icon></button></td>`;
+    });
+  document.querySelector(".table").innerHTML = table;
+
+  addDeleteBtnFunctionality();
+  allResults = [];
+  document.querySelector(".overlay").classList.remove("active");
+}
+
+const prevBtn = document.querySelector(".prevBtn");
+prevBtn.addEventListener("click", () => {
+  if (curPage > 1) {
+    curPage--;
+    renderTable(curPage);
+  }
+});
+
+const nextBtn = document.querySelector(".nextBtn");
+nextBtn.addEventListener("click", () => {
+  if (curPage * pageSize < tableData.length) {
+    curPage++;
+    buildTable(curPage);
+    console.log(curPage);
+  }
+});
+function numPages() {
+  return Math.ceil(tableData.length / pageSize);
+}
+
+const addDeleteBtnFunctionality = () => {
   let popup = document.querySelector(".popup");
   const trashBtns = document.getElementsByClassName("trashBtn");
-  let rowToBeDeleted = null;
+  let rowToBeDeleted;
   const showDeletePopup = (event) => {
     rowToBeDeleted = event.target;
     popup.style.display = "block";
@@ -280,15 +302,22 @@ function buildTable() {
       popup.style.display = "none";
     }
   };
+};
 
-  document.querySelector(".overlay").classList.remove("active");
-  // const select = document.querySelector("#page-size");
-  // let tableSize = document.querySelector(".table").rows.length - 1;
-
-  // select.addEventListener("change", function changePageSize(event) {
-
-  // });
-}
+// const selectPageSize = document.querySelector("#select-page-size");
+// pageSize.addEventListener("change", (event) => {
+//   console.log("change size", event.target.value);
+// });
+// const selectPageNumber = document.querySelector("#select-page-number");
+// pageNumber.addEventListener("change", (event) => {
+//   console.log("change number", event.target.value);
+// });
+//   select.addEventListener("change", function changePageSize(event) {
+//     let pageSize = event.target.value;
+//     if (pageSize === 5) {
+//     }
+//   });
+// };
 
 class Base {
   constructor(url, name, created) {

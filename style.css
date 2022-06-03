@@ -133,3 +133,8 @@ ion-icon {
 .do-not-delete:focus {
   background-color: rgba(0, 0, 0, 0.4);
 }
+a {
+  color: #fff;
+  font-size: 1.5rem;
+  text-decoration: none;
+}
