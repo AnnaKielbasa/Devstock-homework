@@ -4,7 +4,7 @@
   box-sizing: border-box;
 }
 body {
-  background-color: black;
+  background-color: rgb(139, 128, 128);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -31,6 +31,15 @@ h1 {
 .dynamic-btns button:hover {
   background-color: bisque;
   cursor: pointer;
+}
+.search-wrapper {
+  gap: 0.5rem;
+}
+input {
+  font-size: 1rem;
+}
+.hide {
+  display: none;
 }
 .overlay {
   position: absolute;
@@ -70,12 +79,10 @@ h1 {
 p {
   color: white;
 }
-.pagination {
+.pagination,.search-wrapper {
   display: none;
 }
-.pagination.visible {
-  display: block;
-}
+
 table {
   max-width: 80%;
   margin: 2rem auto;

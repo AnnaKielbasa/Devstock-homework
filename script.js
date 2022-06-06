@@ -6,8 +6,21 @@ let tableData;
 let table;
 let category;
 let allResults = [];
-const pageSize = 10;
+let pageSize = 10;
 let curPage = 1;
+let numOfPages;
+
+const searchInput = document.querySelector("#search");
+searchInput.addEventListener("input", (event) => {
+  const value = event.target.value.toLowerCase();
+  tableData.forEach(({ name, title }) => {
+    if (name.toLowerCase().includes(value)) {
+      table.closest("tr").classList.toggle("hide");
+    }
+
+    // .closest("tr").classList.toggle("hide", !isVisible);
+  });
+});
 
 async function getBtnNames(category) {
   let url = `${BASE_URL}${category}`;
@@ -28,7 +41,8 @@ async function getData() {
   const btnOnclick = async (event) => {
     category = event.target.innerHTML.toLowerCase();
     document.querySelector(".overlay").classList.add("active");
-    document.querySelector(".pagination").classList.add("visible");
+    document.querySelector(".pagination").style.display = "flex";
+    document.querySelector(".search-wrapper").style.display = "flex";
     await getBtnNames(category);
 
     if (category === "people") {
@@ -197,9 +211,9 @@ function buildTable(page = 1) {
       let end = curPage * pageSize;
       if (index >= start && index < end) return true;
     })
-    .forEach((item, index) => {
+    .forEach((item) => {
       table += "<tr>";
-      table += `<td>${index + 1}</td>`;
+      table += `<td>${item.id}</td>`;
       table += `<td>${item.url}</td>`;
       if (category === "films") {
         table += `<td>${item.title}</td>`;
@@ -257,24 +271,58 @@ function buildTable(page = 1) {
 }
 
 const prevBtn = document.querySelector(".prevBtn");
-prevBtn.addEventListener("click", () => {
-  if (curPage > 1) {
-    curPage--;
-    renderTable(curPage);
-  }
-});
+prevBtn.addEventListener(
+  "click",
+  () => {
+    if (curPage > 1) {
+      curPage--;
+      buildTable(curPage);
+    }
+  },
+  false
+);
 
 const nextBtn = document.querySelector(".nextBtn");
-nextBtn.addEventListener("click", () => {
-  if (curPage * pageSize < tableData.length) {
-    curPage++;
+nextBtn.addEventListener(
+  "click",
+  () => {
+    if (curPage * pageSize < tableData.length) {
+      curPage++;
+      buildTable(curPage);
+    }
+  },
+  false
+);
+function numPages() {
+  numOfPages = Math.ceil(tableData.length / pageSize);
+  return numOfPages;
+}
+
+const typePageNumber = document.querySelector("#type-page-number");
+typePageNumber.addEventListener(
+  "change",
+  (event) => {
+    curPage = event.target.value;
     buildTable(curPage);
-    console.log(curPage);
+  },
+  false
+);
+
+const selectPageSize = document.querySelector("#select-page-size");
+selectPageSize.addEventListener("change", (event) => {
+  if (selectPageSize.value === "5") {
+    pageSize = 5;
+    buildTable();
+  }
+  if (selectPageSize.value === "10") {
+    pageSize = 10;
+    buildTable();
+  }
+  if (selectPageSize.value === "20") {
+    pageSize = 20;
+    buildTable();
   }
 });
-function numPages() {
-  return Math.ceil(tableData.length / pageSize);
-}
 
 const addDeleteBtnFunctionality = () => {
   let popup = document.querySelector(".popup");
@@ -303,21 +351,6 @@ const addDeleteBtnFunctionality = () => {
     }
   };
 };
-
-// const selectPageSize = document.querySelector("#select-page-size");
-// pageSize.addEventListener("change", (event) => {
-//   console.log("change size", event.target.value);
-// });
-// const selectPageNumber = document.querySelector("#select-page-number");
-// pageNumber.addEventListener("change", (event) => {
-//   console.log("change number", event.target.value);
-// });
-//   select.addEventListener("change", function changePageSize(event) {
-//     let pageSize = event.target.value;
-//     if (pageSize === 5) {
-//     }
-//   });
-// };
 
 class Base {
   constructor(url, name, created) {
