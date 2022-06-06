@@ -9,6 +9,7 @@ body {
   align-items: center;
   justify-content: center;
 }
+
 h1 {
   text-align: center;
   color: rgba(255, 251, 0, 0.714);
@@ -79,7 +80,8 @@ input {
 p {
   color: white;
 }
-.pagination,.search-wrapper {
+.pagination,
+.search-wrapper {
   display: none;
 }
 

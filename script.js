@@ -13,13 +13,11 @@ let numOfPages;
 const searchInput = document.querySelector("#search");
 searchInput.addEventListener("input", (event) => {
   const value = event.target.value.toLowerCase();
-  tableData.forEach(({ name, title }) => {
-    if (name.toLowerCase().includes(value)) {
-      table.closest("tr").classList.toggle("hide");
-    }
-
-    // .closest("tr").classList.toggle("hide", !isVisible);
+  const filteredBySearch = tableData.filter(({ name, title }) => {
+    return name.toLowerCase().includes(value);
   });
+
+  buildTableBody(filteredBySearch);
 });
 
 async function getBtnNames(category) {
@@ -130,7 +128,7 @@ async function getData() {
       );
     }
 
-    buildTable();
+    renderTable();
   };
 
   Object.entries(data).map(([key]) => {
@@ -141,7 +139,7 @@ async function getData() {
   });
 }
 
-function buildTable(page = 1) {
+function renderTable(page = 1) {
   if (page == 1) {
     prevBtn.style.visibility = "hidden";
   } else {
@@ -153,6 +151,22 @@ function buildTable(page = 1) {
   } else {
     nextBtn.style.visibility = "visible";
   }
+  buildTableHead();
+
+  const filtered = tableData.filter((row, index) => {
+    let start = (curPage - 1) * pageSize;
+    let end = curPage * pageSize;
+    if (index >= start && index < end) return true;
+  });
+  buildTableBody(filtered);
+
+  document.querySelector(".table").innerHTML = table;
+
+  addDeleteBtnFunctionality();
+  allResults = [];
+  document.querySelector(".overlay").classList.remove("active");
+}
+function buildTableHead() {
   table = "";
   table += `<th>ID</th>
   <th>URL</th>`;
@@ -204,70 +218,60 @@ function buildTable(page = 1) {
 
   table += `<th>Created</th>`;
   table += `<th>Delete/Details</th>`;
+}
+function buildTableBody(tableData) {
+  tableData.forEach((item) => {
+    table += "<tr>";
+    table += `<td>${item.id}</td>`;
+    table += `<td>${item.url}</td>`;
+    if (category === "films") {
+      table += `<td>${item.title}</td>`;
+    } else {
+      table += `<td>${item.name}</td>`;
+    }
 
-  const filtered = tableData
-    .filter((row, index) => {
-      let start = (curPage - 1) * pageSize;
-      let end = curPage * pageSize;
-      if (index >= start && index < end) return true;
-    })
-    .forEach((item) => {
-      table += "<tr>";
-      table += `<td>${item.id}</td>`;
-      table += `<td>${item.url}</td>`;
-      if (category === "films") {
-        table += `<td>${item.title}</td>`;
-      } else {
-        table += `<td>${item.name}</td>`;
-      }
+    if (category === "people") {
+      table += `<td>${item.birth_year}</td>`;
+    }
 
-      if (category === "people") {
-        table += `<td>${item.birth_year}</td>`;
-      }
+    if (category === "planets") {
+      table += `<td>${item.population}</td>`;
+    }
 
-      if (category === "planets") {
-        table += `<td>${item.population}</td>`;
-      }
+    if (category === "films") {
+      table += `<td>${item.opening_crawl}</td>`;
+    }
 
-      if (category === "films") {
-        table += `<td>${item.opening_crawl}</td>`;
-      }
+    if (category === "species") {
+      table += `<td>${item.average_lifespan}</td>`;
+    }
 
-      if (category === "species") {
-        table += `<td>${item.average_lifespan}</td>`;
-      }
+    if (category === "vehicles" || category === "starships") {
+      table += `<td>${item.model}</td>`;
+    }
+    if (category === "people") {
+      table += `<td>${item.eye_color}</td>`;
+    }
 
-      if (category === "vehicles" || category === "starships") {
-        table += `<td>${item.model}</td>`;
-      }
-      if (category === "people") {
-        table += `<td>${item.eye_color}</td>`;
-      }
+    if (category === "planets") {
+      table += `<td>${item.climate}</td>`;
+    }
 
-      if (category === "planets") {
-        table += `<td>${item.climate}</td>`;
-      }
+    if (category === "films") {
+      table += `<td>${item.director}</td>`;
+    }
 
-      if (category === "films") {
-        table += `<td>${item.director}</td>`;
-      }
+    if (category === "species") {
+      table += `<td>${item.language}</td>`;
+    }
 
-      if (category === "species") {
-        table += `<td>${item.language}</td>`;
-      }
-
-      if (category === "vehicles" || category === "starships") {
-        table += `<td>${item.passengers}</td>`;
-      }
-      table += `<td>${item.date}</td>`;
-      table += `<td><button class="trashBtn"><ion-icon name="trash-outline"></ion-icon></button>
+    if (category === "vehicles" || category === "starships") {
+      table += `<td>${item.passengers}</td>`;
+    }
+    table += `<td>${item.date}</td>`;
+    table += `<td><button class="trashBtn"><ion-icon name="trash-outline"></ion-icon></button>
        <button class="aaa"><ion-icon name="information-circle-outline"></ion-icon></button></td>`;
-    });
-  document.querySelector(".table").innerHTML = table;
-
-  addDeleteBtnFunctionality();
-  allResults = [];
-  document.querySelector(".overlay").classList.remove("active");
+  });
 }
 
 const prevBtn = document.querySelector(".prevBtn");
@@ -276,7 +280,7 @@ prevBtn.addEventListener(
   () => {
     if (curPage > 1) {
       curPage--;
-      buildTable(curPage);
+      renderTable(curPage);
     }
   },
   false
@@ -288,7 +292,7 @@ nextBtn.addEventListener(
   () => {
     if (curPage * pageSize < tableData.length) {
       curPage++;
-      buildTable(curPage);
+      renderTable(curPage);
     }
   },
   false
@@ -303,7 +307,7 @@ typePageNumber.addEventListener(
   "change",
   (event) => {
     curPage = event.target.value;
-    buildTable(curPage);
+    renderTable(curPage);
   },
   false
 );
@@ -312,15 +316,15 @@ const selectPageSize = document.querySelector("#select-page-size");
 selectPageSize.addEventListener("change", (event) => {
   if (selectPageSize.value === "5") {
     pageSize = 5;
-    buildTable();
+    renderTable();
   }
   if (selectPageSize.value === "10") {
     pageSize = 10;
-    buildTable();
+    renderTable();
   }
   if (selectPageSize.value === "20") {
     pageSize = 20;
-    buildTable();
+    renderTable();
   }
 });
 
