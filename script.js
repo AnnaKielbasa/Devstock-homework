@@ -9,16 +9,7 @@ let allResults = [];
 let pageSize = 10;
 let curPage = 1;
 let numOfPages;
-
-const searchInput = document.querySelector("#search");
-searchInput.addEventListener("input", (event) => {
-  const value = event.target.value.toLowerCase();
-  const filteredBySearch = tableData.filter(({ name, title }) => {
-    return name.toLowerCase().includes(value);
-  });
-
-  buildTableBody(filteredBySearch);
-});
+let search;
 
 async function getBtnNames(category) {
   let url = `${BASE_URL}${category}`;
@@ -163,6 +154,12 @@ function renderTable(page = 1) {
   document.querySelector(".table").innerHTML = table;
 
   addDeleteBtnFunctionality();
+  search = document.querySelector("#search");
+  console.log("searh", search);
+  console.log("table1", table);
+  const test2 = search.closest("table");
+  console.log("table", test2);
+
   allResults = [];
   document.querySelector(".overlay").classList.remove("active");
 }
@@ -171,53 +168,54 @@ function buildTableHead() {
   table += `<th>ID</th>
   <th>URL</th>`;
   if (category === "films") {
-    table += `<th>Title</th>`;
+    table += `<th><input type="text" class="search-input" placeholder="Title"></th>`;
   } else {
-    table += `<th>Name</th>`;
+    table += `<th><input type="text" class="search-input" placeholder="Name"</th>`;
   }
 
   if (category === "people") {
-    table += `<th>Birth year</th>`;
+    table += `<th><input type="text" class="search-input" placeholder="Birth year"</th>`;
   }
 
   if (category === "planets") {
-    table += `<th>Population</th>`;
+    table += `<th><input type="text" class="search-input" placeholder="Population"</th>`;
   }
 
   if (category === "films") {
-    table += `<th>Opening crawl</th>`;
+    table += `<th><input type="text" class="search-input" placeholder="Opening crawl"</th>`;
   }
 
   if (category === "species") {
-    table += `<th>Average lifespan</th>`;
+    table += `<th><input type="text" class="search-input" placeholder="Average lifespan"</th>`;
   }
 
   if (category === "vehicles" || category === "starships") {
-    table += `<th>Model</th>`;
+    table += `<th><input type="text" class="search-input" placeholder="Model"</th>`;
   }
 
   if (category === "people") {
-    table += `<th>Eye color</th>`;
+    table += `<th><input type="text" class="search-input" placeholder="Eye color"</th>`;
   }
 
   if (category === "planets") {
-    table += `<th>Climate</th>`;
+    table += `<th><input type="text" class="search-input" placeholder="Climate"</th>`;
   }
 
   if (category === "films") {
-    table += `<th>Director</th>`;
+    table += `<th><input type="text" class="search-input" placeholder="Director"</th>`;
   }
 
   if (category === "species") {
-    table += `<th>Language</th>`;
+    table += `<th><input type="text" class="search-input" placeholder="Language"</th>`;
   }
 
   if (category === "vehicles" || category === "starships") {
-    table += `<th>Passengers</th>`;
+    table += `<th><input type="text" class="search-input" placeholder="Passengers"</th>`;
   }
 
-  table += `<th>Created</th>`;
+  table += `<th><input type="text" class="search-input" placeholder="Created"</th>`;
   table += `<th>Delete/Details</th>`;
+  // addSearch();
 }
 function buildTableBody(tableData) {
   tableData.forEach((item) => {
@@ -269,11 +267,65 @@ function buildTableBody(tableData) {
       table += `<td>${item.passengers}</td>`;
     }
     table += `<td>${item.date}</td>`;
-    table += `<td><button class="trashBtn"><ion-icon name="trash-outline"></ion-icon></button>
+    table += `<td><input type="checkbox" class="checkbox"/><button class="trashBtn"><ion-icon name="trash-outline"></ion-icon></button>
        <button class="aaa"><ion-icon name="information-circle-outline"></ion-icon></button></td>`;
   });
 }
 
+// const test = document.querySelector(".table").querySelectorAll("tbody tr");
+// console.log("test", test);
+// const test1 = Array.from(test);
+
+// const addSearch = async (event) => {
+//   const test = document.querySelector(".table").querySelectorAll("tbody tr");
+//   const test1 = Array.from(test);
+//   search = document.querySelector("#search");
+//   const test2 = search.closest("table");
+//   await getData;
+// };
+
+// document.querySelector("#search").addEventListener("input", (e) => {
+//   search = document.querySelector("#search").closest("table");
+//   console.log(search, "search");
+//   const value = e.target.value.toLowerCase();
+//   // const tableRows = search.closest(".table");
+//   // console.log("tableRows", tableRows);
+//   // const filteredWithSearch = tableData.forEach(({ name }) => {
+//   //   const isVisible = name.toLowerCase().includes(value);
+//   //   console.log(table.content.cloneNode(true).children[0]);
+// });
+// if(!filteredWithSearch){
+// }
+// console.log("search", filteredWithSearch);
+// });
+//   document.querySelector(".search-input").forEach((inputField) => {
+//     const tableRows = search.closest("table").querySelectorAll("tbody tr");
+//     console.log(tableRows);
+//     const headerCell = inputField.closest("th");
+//     console.log(headerCell);
+//     const otherHeaderCells = inputField.closest("tr").children;
+//     console.log(otherHeaderCells);
+//     const columnIndex = Array.from(otherHeaderCells).indexOf(headerCell);
+//     const searchableCells = Array.from(tableRows).map(
+//       (row) => row.querySelectorAll("td")[columnIndex]
+//     );
+//     inputField.addEventListener("input", () => {
+//       const searchQuery = inputField.value.toLowerCase();
+
+//       for (const tableCell of searchableCells) {
+//         const row = tableCell.closest("tr");
+//         const value = tableCell.textContent.toLowerCase().replace(",", "");
+
+//         row.style.visibility = null;
+
+//         if (value.search(searchQuery) === -1) {
+//           row.style.visibility = "collapse";
+//         }
+//       }
+//     });
+//   });
+
+// }
 const prevBtn = document.querySelector(".prevBtn");
 prevBtn.addEventListener(
   "click",
@@ -331,9 +383,19 @@ selectPageSize.addEventListener("change", (event) => {
 const addDeleteBtnFunctionality = () => {
   let popup = document.querySelector(".popup");
   const trashBtns = document.getElementsByClassName("trashBtn");
+
+  let checkboxChecked;
   let rowToBeDeleted;
+  let filteredCheckbox;
+
   const showDeletePopup = (event) => {
+    checkboxChecked = document.querySelectorAll(".checkbox");
+    filteredCheckbox = Array.from(checkboxChecked).filter(
+      (input) => input.checked
+    );
     rowToBeDeleted = event.target;
+   
+
     popup.style.display = "block";
   };
   [...trashBtns].forEach((event) => (event.onclick = showDeletePopup));
@@ -341,6 +403,9 @@ const addDeleteBtnFunctionality = () => {
   const handleDelete = document
     .querySelector(".delete")
     .addEventListener("click", () => {
+      if (filteredCheckbox != null) {
+        filteredCheckbox.forEach((item) => item.closest("tr").remove());
+      }
       rowToBeDeleted.closest("tr").remove();
       popup.style.display = "none";
     });
