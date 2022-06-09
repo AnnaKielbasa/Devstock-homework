@@ -1,4 +1,14 @@
-window.onload = getData;
+window.onload = addBtns;
+
+import {
+  Base,
+  People,
+  Planets,
+  Films,
+  Species,
+  Vehicles,
+  Starships,
+} from "./classes.js";
 
 const BASE_URL = "https://swapi.dev/api/";
 let currentCategoryData;
@@ -11,7 +21,7 @@ let curPage = 1;
 let numOfPages;
 let search;
 
-async function getBtnNames(category) {
+async function fetchAPI(category) {
   let url = `${BASE_URL}${category}`;
   while (url) {
     const response = await fetch(url);
@@ -22,17 +32,29 @@ async function getBtnNames(category) {
   return allResults;
 }
 
-async function getData() {
+async function addBtns() {
   const response = await fetch(BASE_URL);
   const data = await response.json();
 
   const buttons = document.querySelector(".dynamic-btns");
-  const btnOnclick = async (event) => {
+ 
+  Object.entries(data).map(([key]) => {
+    const btn = document.createElement("button");
+    btn.innerHTML = key.toUpperCase();
+    btn.addEventListener("click", btnOnclick);
+    buttons.appendChild(btn);
+  });
+}
+  async function btnOnclick  (event)  {
     category = event.target.innerHTML.toLowerCase();
     document.querySelector(".overlay").classList.add("active");
     document.querySelector(".pagination").style.display = "flex";
     document.querySelector(".search-wrapper").style.display = "flex";
-    await getBtnNames(category);
+
+    search = document.querySelector("#search");
+    search.addEventListener("input", searchInput)
+    console.log("searh", search);
+    await fetchAPI(category);
 
     if (category === "people") {
       tableData = allResults.map(
@@ -122,13 +144,8 @@ async function getData() {
     renderTable();
   };
 
-  Object.entries(data).map(([key]) => {
-    const btn = document.createElement("button");
-    btn.innerHTML = key.toUpperCase();
-    btn.addEventListener("click", btnOnclick);
-    buttons.appendChild(btn);
-  });
-}
+  
+
 
 function renderTable(page = 1) {
   if (page == 1) {
@@ -154,11 +171,7 @@ function renderTable(page = 1) {
   document.querySelector(".table").innerHTML = table;
 
   addDeleteBtnFunctionality();
-  search = document.querySelector("#search");
-  console.log("searh", search);
-  console.log("table1", table);
-  const test2 = search.closest("table");
-  console.log("table", test2);
+ 
 
   allResults = [];
   document.querySelector(".overlay").classList.remove("active");
@@ -215,7 +228,7 @@ function buildTableHead() {
 
   table += `<th><input type="text" class="search-input" placeholder="Created"</th>`;
   table += `<th>Delete/Details</th>`;
-  // addSearch();
+  
 }
 function buildTableBody(tableData) {
   tableData.forEach((item) => {
@@ -272,16 +285,23 @@ function buildTableBody(tableData) {
   });
 }
 
-// const test = document.querySelector(".table").querySelectorAll("tbody tr");
-// console.log("test", test);
+
+async function  searchInput(event){
+  const test = document.querySelector(".table").querySelectorAll("tbody tr");
+console.log("test", test);
+  console.log(event.target.value)
+}
+// addSearch();
+
 // const test1 = Array.from(test);
 
 // const addSearch = async (event) => {
+//   document.querySelector(".search-wrapper").style.display = "flex";
 //   const test = document.querySelector(".table").querySelectorAll("tbody tr");
 //   const test1 = Array.from(test);
 //   search = document.querySelector("#search");
 //   const test2 = search.closest("table");
-//   await getData;
+//   await addBTns();
 // };
 
 // document.querySelector("#search").addEventListener("input", (e) => {
@@ -381,12 +401,12 @@ selectPageSize.addEventListener("change", (event) => {
 });
 
 const addDeleteBtnFunctionality = () => {
-  let popup = document.querySelector(".popup");
-  const trashBtns = document.getElementsByClassName("trashBtn");
-
   let checkboxChecked;
   let rowToBeDeleted;
   let filteredCheckbox;
+
+  let popup = document.querySelector(".popup");
+  const trashBtns = document.getElementsByClassName("trashBtn");
 
   const showDeletePopup = (event) => {
     checkboxChecked = document.querySelectorAll(".checkbox");
@@ -421,166 +441,4 @@ const addDeleteBtnFunctionality = () => {
   };
 };
 
-class Base {
-  constructor(url, name, created) {
-    this.url = url;
-    this.name = name;
-    this.created = created;
-  }
-}
-class People extends Base {
-  static count = 1;
 
-  constructor(url, name, created, id, gender, birth_year, eye_color) {
-    super(url, name, created);
-    // if (
-    //     !film.title ||
-    //     !film.url ||
-    //     !film.director ||
-    //     !film.release_date ||
-    //     !film.episode_id ||
-    //     !film.characters
-    //   ) {
-    //     throw new Error(" Missing required movie info!");
-    //   }
-    this.gender = gender;
-    this.birth_year = birth_year;
-    this.eye_color = eye_color;
-    this.id = People.count++;
-    this.date = created.substring(0, 10);
-  }
-}
-class Planets extends Base {
-  static count = 1;
-
-  constructor(url, name, created, id, population, climate, terrain) {
-    super(url, name, created);
-    // if (
-    //     !film.title ||
-    //     !film.url ||
-    //     !film.director ||
-    //     !film.release_date ||
-    //     !film.episode_id ||
-    //     !film.characters
-    //   ) {
-    //     throw new Error(" Missing required movie info!");
-    //   }
-    this.population = population;
-    this.climate = climate;
-    this.terrain = terrain;
-    this.id = Planets.count++;
-    this.date = created.substring(0, 10);
-  }
-}
-class Films extends Base {
-  static count = 1;
-
-  constructor(url, name, created, id, director, title, opening_crawl) {
-    super(url, name, created);
-    // if (
-    //     !film.title ||
-    //     !film.url ||
-    //     !film.director ||
-    //     !film.release_date ||
-    //     !film.episode_id ||
-    //     !film.characters
-    //   ) {
-    //     throw new Error(" Missing required movie info!");
-    //   }
-    this.director = director;
-    this.title = title;
-    this.opening_crawl = opening_crawl;
-    this.id = Films.count++;
-    this.date = created.substring(0, 10);
-  }
-}
-class Species extends Base {
-  static count = 1;
-
-  constructor(
-    url,
-    name,
-    created,
-    id,
-    language,
-    classification,
-    average_lifespan
-  ) {
-    super(url, name, created);
-    // if (
-    //     !film.title ||
-    //     !film.url ||
-    //     !film.director ||
-    //     !film.release_date ||
-    //     !film.episode_id ||
-    //     !film.characters
-    //   ) {
-    //     throw new Error(" Missing required movie info!");
-    //   }
-    this.language = language;
-    this.classification = classification;
-    this.average_lifespan = average_lifespan;
-    this.id = Species.count++;
-    this.date = created.substring(0, 10);
-  }
-}
-class Vehicles extends Base {
-  static count = 1;
-
-  constructor(
-    url,
-    name,
-    created,
-    id,
-    model,
-    passengers,
-    max_atmosphering_speed
-  ) {
-    super(url, name, created);
-    // if (
-    //     !film.title ||
-    //     !film.url ||
-    //     !film.director ||
-    //     !film.release_date ||
-    //     !film.episode_id ||
-    //     !film.characters
-    //   ) {
-    //     throw new Error(" Missing required movie info!");
-    //   }
-    this.model = model;
-    this.passengers = passengers;
-    this.max_atmosphering_speed = max_atmosphering_speed;
-    this.id = Vehicles.count++;
-    this.date = created.substring(0, 10);
-  }
-}
-class Starships extends Base {
-  static count = 1;
-
-  constructor(
-    url,
-    name,
-    created,
-    id,
-    model,
-    passengers,
-    max_atmosphering_speed
-  ) {
-    super(url, name, created);
-    // if (
-    //     !film.title ||
-    //     !film.url ||
-    //     !film.director ||
-    //     !film.release_date ||
-    //     !film.episode_id ||
-    //     !film.characters
-    //   ) {
-    //     throw new Error(" Missing required movie info!");
-    //   }
-    this.model = model;
-    this.passengers = passengers;
-    this.max_atmosphering_speed = max_atmosphering_speed;
-    this.id = Starships.count++;
-    this.date = created.substring(0, 10);
-  }
-}
