@@ -20,6 +20,10 @@ let pageSize = 10;
 let curPage = 1;
 let numOfPages;
 let search;
+let filteredTableData;
+let searchValue;
+
+const dataTableTemplate = document.querySelector("data-table-template");
 
 async function fetchAPI(category) {
   let url = `${BASE_URL}${category}`;
@@ -37,7 +41,7 @@ async function addBtns() {
   const data = await response.json();
 
   const buttons = document.querySelector(".dynamic-btns");
- 
+
   Object.entries(data).map(([key]) => {
     const btn = document.createElement("button");
     btn.innerHTML = key.toUpperCase();
@@ -45,107 +49,89 @@ async function addBtns() {
     buttons.appendChild(btn);
   });
 }
-  async function btnOnclick  (event)  {
-    category = event.target.innerHTML.toLowerCase();
-    document.querySelector(".overlay").classList.add("active");
-    document.querySelector(".pagination").style.display = "flex";
-    document.querySelector(".search-wrapper").style.display = "flex";
 
-    search = document.querySelector("#search");
-    search.addEventListener("input", searchInput)
-    console.log("searh", search);
-    await fetchAPI(category);
+async function btnOnclick(event) {
+  category = event.target.innerHTML.toLowerCase();
+  document.querySelector(".overlay").classList.add("active");
 
-    if (category === "people") {
-      tableData = allResults.map(
-        ({ url, name, created, id, gender, birth_year, eye_color }) =>
-          new People(url, name, created, id, gender, birth_year, eye_color)
-      );
-    }
-    if (category === "planets") {
-      tableData = allResults.map(
-        ({ url, name, created, id, population, climate, terrain }) =>
-          new Planets(url, name, created, id, population, climate, terrain)
-      );
-    }
-    if (category === "films") {
-      tableData = allResults.map(
-        ({ url, name, created, id, director, title, opening_crawl }) =>
-          new Films(url, name, created, id, director, title, opening_crawl)
-      );
-    }
-    if (category === "species") {
-      tableData = allResults.map(
-        ({
+  await fetchAPI(category);
+
+  if (category === "people") {
+    tableData = allResults.map(
+      ({ url, name, created, id, gender, birth_year, eye_color }) =>
+        new People(url, name, created, id, gender, birth_year, eye_color)
+    );
+  }
+  if (category === "planets") {
+    tableData = allResults.map(
+      ({ url, name, created, id, population, climate, terrain }) =>
+        new Planets(url, name, created, id, population, climate, terrain)
+    );
+  }
+  if (category === "films") {
+    tableData = allResults.map(
+      ({ url, name, created, id, director, title, opening_crawl }) =>
+        new Films(url, name, created, id, director, title, opening_crawl)
+    );
+  }
+  if (category === "species") {
+    tableData = allResults.map(
+      ({
+        url,
+        name,
+        created,
+        id,
+        language,
+        classification,
+        average_lifespan,
+      }) =>
+        new Species(
           url,
           name,
           created,
           id,
           language,
           classification,
-          average_lifespan,
-        }) =>
-          new Species(
-            url,
-            name,
-            created,
-            id,
-            language,
-            classification,
-            average_lifespan
-          )
-      );
-    }
-    if (category === "vehicles") {
-      tableData = allResults.map(
-        ({
+          average_lifespan
+        )
+    );
+  }
+  if (category === "vehicles") {
+    tableData = allResults.map(
+      ({ url, name, created, id, model, passengers, max_atmosphering_speed }) =>
+        new Vehicles(
           url,
           name,
           created,
           id,
           model,
           passengers,
-          max_atmosphering_speed,
-        }) =>
-          new Vehicles(
-            url,
-            name,
-            created,
-            id,
-            model,
-            passengers,
-            max_atmosphering_speed
-          )
-      );
-    }
-    if (category === "starships") {
-      tableData = allResults.map(
-        ({
+          max_atmosphering_speed
+        )
+    );
+  }
+  if (category === "starships") {
+    tableData = allResults.map(
+      ({ url, name, created, id, model, passengers, max_atmosphering_speed }) =>
+        new Starships(
           url,
           name,
           created,
           id,
           model,
           passengers,
-          max_atmosphering_speed,
-        }) =>
-          new Starships(
-            url,
-            name,
-            created,
-            id,
-            model,
-            passengers,
-            max_atmosphering_speed
-          )
-      );
-    }
+          max_atmosphering_speed
+        )
+    );
+  }
 
-    renderTable();
-  };
+  renderTable();
+  // document.querySelector(".pagination").style.display = "flex";
+  // document.querySelector(".search-wrapper").style.display = "flex";
 
-  
-
+  search = document.querySelector("#search");
+  search.addEventListener("input", searchInput);
+}
 
 function renderTable(page = 1) {
   if (page == 1) {
@@ -160,18 +146,12 @@ function renderTable(page = 1) {
     nextBtn.style.visibility = "visible";
   }
   buildTableHead();
-
-  const filtered = tableData.filter((row, index) => {
-    let start = (curPage - 1) * pageSize;
-    let end = curPage * pageSize;
-    if (index >= start && index < end) return true;
-  });
-  buildTableBody(filtered);
-
+  buildTableBody();
+ document.querySelector(".pagination").style.display = "flex";
+  document.querySelector(".search-wrapper").style.display = "flex";
   document.querySelector(".table").innerHTML = table;
 
   addDeleteBtnFunctionality();
- 
 
   allResults = [];
   document.querySelector(".overlay").classList.remove("active");
@@ -181,57 +161,65 @@ function buildTableHead() {
   table += `<th>ID</th>
   <th>URL</th>`;
   if (category === "films") {
-    table += `<th><input type="text" class="search-input" placeholder="Title"></th>`;
+    table += `<th>Title></th>`;
   } else {
-    table += `<th><input type="text" class="search-input" placeholder="Name"</th>`;
+    table += `<th>Name</th>`;
   }
 
   if (category === "people") {
-    table += `<th><input type="text" class="search-input" placeholder="Birth year"</th>`;
+    table += `<th>Birth year</th>`;
   }
 
   if (category === "planets") {
-    table += `<th><input type="text" class="search-input" placeholder="Population"</th>`;
+    table += `<th>Population</th>`;
   }
 
   if (category === "films") {
-    table += `<th><input type="text" class="search-input" placeholder="Opening crawl"</th>`;
+    table += `<th>Opening crawl</th>`;
   }
 
   if (category === "species") {
-    table += `<th><input type="text" class="search-input" placeholder="Average lifespan"</th>`;
+    table += `<th>Average lifespan</th>`;
   }
 
   if (category === "vehicles" || category === "starships") {
-    table += `<th><input type="text" class="search-input" placeholder="Model"</th>`;
+    table += `<th>Model</th>`;
   }
 
   if (category === "people") {
-    table += `<th><input type="text" class="search-input" placeholder="Eye color"</th>`;
+    table += `<th>Eye color</th>`;
   }
 
   if (category === "planets") {
-    table += `<th><input type="text" class="search-input" placeholder="Climate"</th>`;
+    table += `<th>Climate</th>`;
   }
 
   if (category === "films") {
-    table += `<th><input type="text" class="search-input" placeholder="Director"</th>`;
+    table += `<th>Director</th>`;
   }
 
   if (category === "species") {
-    table += `<th><input type="text" class="search-input" placeholder="Language"</th>`;
+    table += `<th>Language</th>`;
   }
 
   if (category === "vehicles" || category === "starships") {
-    table += `<th><input type="text" class="search-input" placeholder="Passengers"</th>`;
+    table += `<th>Passengers</th>`;
   }
 
-  table += `<th><input type="text" class="search-input" placeholder="Created"</th>`;
+  table += `<th>Created"</th>`;
   table += `<th>Delete/Details</th>`;
-  
 }
-function buildTableBody(tableData) {
-  tableData.forEach((item) => {
+function buildTableBody() {
+  const tableDataAftersearch = searchValue
+    ? tableData.filter((item) => item.name.toLowerCase().includes(searchValue))
+    : tableData;
+  let filtered = tableDataAftersearch.filter((_, index) => {
+    let start = (curPage - 1) * pageSize;
+    let end = curPage * pageSize;
+    if (index >= start && index < end) return true;
+  });
+
+  filtered.forEach((item) => {
     table += "<tr>";
     table += `<td>${item.id}</td>`;
     table += `<td>${item.url}</td>`;
@@ -250,7 +238,7 @@ function buildTableBody(tableData) {
     }
 
     if (category === "films") {
-      table += `<td>${item.opening_crawl}</td>`;
+      table += `<td>${item.opening_crawl.substring(0, 100)}...</td>`;
     }
 
     if (category === "species") {
@@ -285,67 +273,12 @@ function buildTableBody(tableData) {
   });
 }
 
-
-async function  searchInput(event){
-  const test = document.querySelector(".table").querySelectorAll("tbody tr");
-console.log("test", test);
-  console.log(event.target.value)
+function searchInput(event) {
+  searchValue = event.target.value.toLowerCase();
+  curPage = 1;
+  renderTable();
 }
-// addSearch();
 
-// const test1 = Array.from(test);
-
-// const addSearch = async (event) => {
-//   document.querySelector(".search-wrapper").style.display = "flex";
-//   const test = document.querySelector(".table").querySelectorAll("tbody tr");
-//   const test1 = Array.from(test);
-//   search = document.querySelector("#search");
-//   const test2 = search.closest("table");
-//   await addBTns();
-// };
-
-// document.querySelector("#search").addEventListener("input", (e) => {
-//   search = document.querySelector("#search").closest("table");
-//   console.log(search, "search");
-//   const value = e.target.value.toLowerCase();
-//   // const tableRows = search.closest(".table");
-//   // console.log("tableRows", tableRows);
-//   // const filteredWithSearch = tableData.forEach(({ name }) => {
-//   //   const isVisible = name.toLowerCase().includes(value);
-//   //   console.log(table.content.cloneNode(true).children[0]);
-// });
-// if(!filteredWithSearch){
-// }
-// console.log("search", filteredWithSearch);
-// });
-//   document.querySelector(".search-input").forEach((inputField) => {
-//     const tableRows = search.closest("table").querySelectorAll("tbody tr");
-//     console.log(tableRows);
-//     const headerCell = inputField.closest("th");
-//     console.log(headerCell);
-//     const otherHeaderCells = inputField.closest("tr").children;
-//     console.log(otherHeaderCells);
-//     const columnIndex = Array.from(otherHeaderCells).indexOf(headerCell);
-//     const searchableCells = Array.from(tableRows).map(
-//       (row) => row.querySelectorAll("td")[columnIndex]
-//     );
-//     inputField.addEventListener("input", () => {
-//       const searchQuery = inputField.value.toLowerCase();
-
-//       for (const tableCell of searchableCells) {
-//         const row = tableCell.closest("tr");
-//         const value = tableCell.textContent.toLowerCase().replace(",", "");
-
-//         row.style.visibility = null;
-
-//         if (value.search(searchQuery) === -1) {
-//           row.style.visibility = "collapse";
-//         }
-//       }
-//     });
-//   });
-
-// }
 const prevBtn = document.querySelector(".prevBtn");
 prevBtn.addEventListener(
   "click",
@@ -376,10 +309,12 @@ function numPages() {
 
 const typePageNumber = document.querySelector("#type-page-number");
 typePageNumber.addEventListener(
-  "change",
+  "input",
   (event) => {
     curPage = event.target.value;
-    renderTable(curPage);
+    if (curPage > 0 && curPage <= numOfPages) {
+      renderTable(curPage);
+    }
   },
   false
 );
@@ -414,7 +349,6 @@ const addDeleteBtnFunctionality = () => {
       (input) => input.checked
     );
     rowToBeDeleted = event.target;
-   
 
     popup.style.display = "block";
   };
@@ -440,5 +374,3 @@ const addDeleteBtnFunctionality = () => {
     }
   };
 };
-
-
