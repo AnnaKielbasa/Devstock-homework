@@ -65,7 +65,7 @@ export class Base {
       //     throw new Error(" Missing required movie info!");
       //   }
       this.director = director;
-      this.title = title;
+      this.name = title;
       this.opening_crawl = opening_crawl;
       this.id = Films.count++;
       this.date = created.substring(0, 10);

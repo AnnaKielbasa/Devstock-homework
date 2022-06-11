@@ -16,6 +16,7 @@ body {
   max-width: 80vw;
   margin: 0 auto;
 }
+
 h1 {
   text-align: center;
   color: rgba(0, 0, 0, 0.8);
@@ -26,7 +27,7 @@ h1 {
   text-transform: uppercase;
 }
 .dynamic-btns {
-  margin: 0 auto;
+  margin: 0.5rem auto;
   max-width: 50vw;
   display: flex;
   align-items: center;
@@ -37,8 +38,10 @@ h1 {
   background-color: rgb(251, 249, 208);
   font-size: 1.5rem;
   border-radius: 20px;
-  padding: 0.5em;
-  font-family: "roboto", sans-serif;
+  padding: 0.1em 1em;
+
+  font-family: "Gentium Plus", serif;
+  font-weight: 700;
 }
 .dynamic-btns button:hover {
   background-color: bisque;
@@ -47,12 +50,22 @@ h1 {
 .search-wrapper {
   gap: 0.5rem;
 }
+#search {
+  background-color: rgb(251, 249, 208);
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem;
+  font-family: "Gentium Plus", serif;
+}
+#search:hover {
+  background-color: bisque;
+}
 .search-wrapper ion-icon {
   position: absolute;
 }
 .wrapper-icon {
-  padding: 3px;
-  margin-left: 170px;
+  padding: 10px;
+  margin-left: 11rem;
 }
 input {
   font-size: 1rem;
@@ -110,16 +123,23 @@ p {
 }
 
 table {
-  max-width: 80%;
+  min-width: 80vw;
   margin: 1rem auto;
   table-layout: fixed;
-  background-color: rgb(239, 232, 209);
+  background: rgba(252, 176, 69, 1);
+  background: linear-gradient(
+    90deg,
+    rgba(58, 77, 180, 1) 0%,
+    rgba(253, 235, 29, 1) 50%,
+    rgba(252, 176, 69, 1) 100%
+  );
   border-radius: 10px;
+  font-family: "Gentium Plus", serif;
+  border-spacing: 0;
 }
 
 th {
-  /* border: 1px solid #000; */
-
+  font-size: 1.2rem;
   text-transform: uppercase;
   color: #000;
   padding: 0.8rem;
@@ -127,14 +147,25 @@ th {
 
 td {
   color: #000;
-  /* border: 1px solid #000; */
+
   padding: 0.5em;
-  /* font-size:1.3rem; */
+  font-size: 1rem;
+
+  text-align: center;
 
   word-wrap: break-word;
 }
 td ion-icon {
   font-size: 40px;
+}
+tr:hover {
+  background-color: rgba(58, 77, 180, 0.1);
+}
+.delete-details-container {
+  display: flex;
+  gap: 0.3rem;
+  justify-content: center;
+  align-items: center;
 }
 .popup {
   position: fixed;
@@ -160,6 +191,7 @@ td ion-icon {
   flex-direction: column;
   gap: 0.7rem;
 }
+
 .delete,
 .do-not-delete {
   border-radius: 20px;

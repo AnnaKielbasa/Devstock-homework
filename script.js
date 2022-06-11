@@ -13,17 +13,14 @@ import {
 const BASE_URL = "https://swapi.dev/api/";
 let currentCategoryData;
 let tableData;
-let table;
+let table = null;
 let category;
 let allResults = [];
 let pageSize = 10;
 let curPage = 1;
 let numOfPages;
 let search;
-let filteredTableData;
 let searchValue;
-
-const dataTableTemplate = document.querySelector("data-table-template");
 
 async function fetchAPI(category) {
   let url = `${BASE_URL}${category}`;
@@ -126,11 +123,6 @@ async function btnOnclick(event) {
   }
 
   renderTable();
-  // document.querySelector(".pagination").style.display = "flex";
-  // document.querySelector(".search-wrapper").style.display = "flex";
-
-  search = document.querySelector("#search");
-  search.addEventListener("input", searchInput);
 }
 
 function renderTable(page = 1) {
@@ -147,21 +139,24 @@ function renderTable(page = 1) {
   }
   buildTableHead();
   buildTableBody();
- document.querySelector(".pagination").style.display = "flex";
+  document.querySelector(".pagination").style.display = "flex";
   document.querySelector(".search-wrapper").style.display = "flex";
   document.querySelector(".table").innerHTML = table;
 
   addDeleteBtnFunctionality();
+  addDetailsBtnFunctionality();
+  search = document.querySelector("#search");
+  search.addEventListener("input", searchInput);
 
   allResults = [];
   document.querySelector(".overlay").classList.remove("active");
 }
 function buildTableHead() {
   table = "";
-  table += `<th>ID</th>
-  <th>URL</th>`;
+  table += `<th>ID</th>`;
+
   if (category === "films") {
-    table += `<th>Title></th>`;
+    table += `<th>Title</th>`;
   } else {
     table += `<th>Name</th>`;
   }
@@ -205,8 +200,8 @@ function buildTableHead() {
   if (category === "vehicles" || category === "starships") {
     table += `<th>Passengers</th>`;
   }
-
-  table += `<th>Created"</th>`;
+  table += `<th>URL</th>`;
+  table += `<th>Created</th>`;
   table += `<th>Delete/Details</th>`;
 }
 function buildTableBody() {
@@ -222,12 +217,7 @@ function buildTableBody() {
   filtered.forEach((item) => {
     table += "<tr>";
     table += `<td>${item.id}</td>`;
-    table += `<td>${item.url}</td>`;
-    if (category === "films") {
-      table += `<td>${item.title}</td>`;
-    } else {
-      table += `<td>${item.name}</td>`;
-    }
+    table += `<td>${item.name}</td>`;
 
     if (category === "people") {
       table += `<td>${item.birth_year}</td>`;
@@ -238,7 +228,7 @@ function buildTableBody() {
     }
 
     if (category === "films") {
-      table += `<td>${item.opening_crawl.substring(0, 100)}...</td>`;
+      table += `<td>${item.opening_crawl.substring(0, 50)}...</td>`;
     }
 
     if (category === "species") {
@@ -267,9 +257,10 @@ function buildTableBody() {
     if (category === "vehicles" || category === "starships") {
       table += `<td>${item.passengers}</td>`;
     }
+    table += `<td>${item.url}</td>`;
     table += `<td>${item.date}</td>`;
-    table += `<td><input type="checkbox" class="checkbox"/><button class="trashBtn"><ion-icon name="trash-outline"></ion-icon></button>
-       <button class="aaa"><ion-icon name="information-circle-outline"></ion-icon></button></td>`;
+    table += `<td><div class="delete-details-container"><input type="checkbox" class="checkbox"/><button class="trashBtn"><ion-icon name="trash-outline"></ion-icon></button>
+       <button class="details"><ion-icon name="information-circle-outline"></ion-icon></button></div></td>`;
   });
 }
 
@@ -373,4 +364,17 @@ const addDeleteBtnFunctionality = () => {
       popup.style.display = "none";
     }
   };
+};
+const addDetailsBtnFunctionality = () => {
+  let rowToShowDetails;
+
+  const detailsBtns = document.getElementsByClassName("details");
+  console.log(detailsBtns);
+  const showDetails = (event) => {
+    rowToShowDetails = event.target;
+    console.log({ rowToShowDetails });
+    rowToShowDetails.closest("table").style.maxWidth = "200px";
+    // table.style.color = "red";
+  };
+  [...detailsBtns].forEach((event) => (event.onclick = showDetails));
 };
