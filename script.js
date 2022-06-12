@@ -13,7 +13,7 @@ import {
 const BASE_URL = "https://swapi.dev/api/";
 let currentCategoryData;
 let tableData;
-let table = null;
+let table;
 let category;
 let allResults = [];
 let pageSize = 10;
@@ -21,6 +21,7 @@ let curPage = 1;
 let numOfPages;
 let search;
 let searchValue;
+let detailsToShow;
 
 async function fetchAPI(category) {
   let url = `${BASE_URL}${category}`;
@@ -67,8 +68,17 @@ async function btnOnclick(event) {
   }
   if (category === "films") {
     tableData = allResults.map(
-      ({ url, name, created, id, director, title, opening_crawl }) =>
-        new Films(url, name, created, id, director, title, opening_crawl)
+      ({ url, name, created, id, director, title, opening_crawl, producer }) =>
+        new Films(
+          url,
+          name,
+          created,
+          id,
+          director,
+          title,
+          opening_crawl,
+          producer
+        )
     );
   }
   if (category === "species") {
@@ -200,7 +210,22 @@ function buildTableHead() {
   if (category === "vehicles" || category === "starships") {
     table += `<th>Passengers</th>`;
   }
-  table += `<th>URL</th>`;
+  if (category === "people") {
+    table += `<th>Gender</th>`;
+  }
+  if (category === "planets") {
+    table += `<th>Terrain</th>`;
+  }
+  if (category === "films") {
+    table += `<th>Producer</th>`;
+  }
+  if (category === "species") {
+    table += `<th>Classification</th>`;
+  }
+  if (category === "vehicles" || category === "starships") {
+    table += `<th>Max atmosphering speed</th>`;
+  }
+  // table += `<th>URL</th>`;
   table += `<th>Created</th>`;
   table += `<th>Delete/Details</th>`;
 }
@@ -257,7 +282,23 @@ function buildTableBody() {
     if (category === "vehicles" || category === "starships") {
       table += `<td>${item.passengers}</td>`;
     }
-    table += `<td>${item.url}</td>`;
+    if (category === "people") {
+      table += `<td>${item.gender}</td>`;
+    }
+    if (category === "planets") {
+      table += `<td>${item.terrain}</td>`;
+    }
+    if (category === "films") {
+      table += `<td>${item.producer}</td>`;
+    }
+    if (category === "species") {
+      table += `<td>${item.classification}</td>`;
+    }
+    if (category === "vehicles" || category === "starships") {
+      table += `<td>${item.max_atmosphering_speed}</td>`;
+    }
+
+    // table += `<td>${item.url}</td>`;
     table += `<td>${item.date}</td>`;
     table += `<td><div class="delete-details-container"><input type="checkbox" class="checkbox"/><button class="trashBtn"><ion-icon name="trash-outline"></ion-icon></button>
        <button class="details"><ion-icon name="information-circle-outline"></ion-icon></button></div></td>`;
@@ -369,12 +410,22 @@ const addDetailsBtnFunctionality = () => {
   let rowToShowDetails;
 
   const detailsBtns = document.getElementsByClassName("details");
-  console.log(detailsBtns);
+
   const showDetails = (event) => {
     rowToShowDetails = event.target;
     console.log({ rowToShowDetails });
-    rowToShowDetails.closest("table").style.maxWidth = "200px";
-    // table.style.color = "red";
+
+    document.querySelector("table").classList.add("small-table");
+    document.querySelector(".details-popup").style.display = "flex";
+
+    detailsToShow = "";
   };
   [...detailsBtns].forEach((event) => (event.onclick = showDetails));
+
+  const handleCloseDetails = document
+    .querySelector(".close-details")
+    .addEventListener("click", function () {
+      document.querySelector("table").classList.remove("small-table");
+      document.querySelector(".details-popup").style.display = "none";
+    });
 };
