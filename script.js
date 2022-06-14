@@ -413,12 +413,41 @@ const addDetailsBtnFunctionality = () => {
 
   const showDetails = (event) => {
     rowToShowDetails = event.target;
-    console.log({ rowToShowDetails });
+    // console.log({ rowToShowDetails });
+    let th = document.querySelectorAll("th");
+    let thArr = Array.from(th);
+    let thInnerText = thArr.map((th) => {
+      return th.innerText;
+    });
+    // console.log({test3});
+
+    let findTrToShowDetails = rowToShowDetails.closest("tr");
+    let trInnerText = Array.from(findTrToShowDetails.innerText)
+      .join("")
+      .split("\t");
+    // console.log({ test2 });
 
     document.querySelector("table").classList.add("small-table");
     document.querySelector(".details-popup").style.display = "flex";
 
+    let combineThAndTr = trInnerText.reduce(
+      (result, field, index) => {
+        result[columns[index]] = field;
+        return result;
+      },
+      [{}]
+    );
+    console.log({ combineThAndTr });
     detailsToShow = "";
+    // combineThAndTr.forEach((item) => {
+    //   detailsToShow += `<span>${item}</span>`;
+    // });
+
+    // let rowToShowDetailsID=Array.from(test1.innerText)
+    // detailsToShow += `<span>${test1.innerHTML[4]}</span>`;
+    // console.log({rowToShowDetailsID})
+
+    document.querySelector(".details-popup").innerHTML = detailsToShow;
   };
   [...detailsBtns].forEach((event) => (event.onclick = showDetails));
 
