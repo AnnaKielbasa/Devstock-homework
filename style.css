@@ -4,12 +4,7 @@
   box-sizing: border-box;
 }
 body {
-  /* background-color: rgb(139, 128, 128); */
-  /* display: flex;
-  align-items: center;
-  justify-content: center; */
-  background-image: url("/jeremy-thomas-E0AHdsENmDg-unsplash.jpg");
-
+  background-image: url("./saksham-gangwar-YVgOh8w1R4s-unsplash.jpg");
   background-size: cover;
 }
 .container {
@@ -26,6 +21,7 @@ h1 {
   font-family: "roboto", sans-serif;
   text-transform: uppercase;
 }
+/* Buttons */
 .dynamic-btns {
   margin: 0.5rem auto;
   max-width: 50vw;
@@ -35,7 +31,7 @@ h1 {
   gap: 1rem;
 }
 .dynamic-btns button {
-  background-color: rgb(251, 249, 208);
+  background-color: rgb(250, 250, 247);
   font-size: 1.5rem;
   border-radius: 20px;
   padding: 0.1em 1em;
@@ -47,15 +43,18 @@ h1 {
   background-color: bisque;
   cursor: pointer;
 }
+/* Search */
 .search-wrapper {
   gap: 0.5rem;
+  justify-content: center;
 }
 #search {
-  background-color: rgb(251, 249, 208);
+  background-color: rgb(250, 250, 247);
   border: none;
   border-radius: 5px;
   padding: 0.5rem;
   font-family: "Gentium Plus", serif;
+  font-size: 1rem;
 }
 #search:hover {
   background-color: bisque;
@@ -67,18 +66,8 @@ h1 {
   padding: 10px;
   margin-left: 11rem;
 }
-input {
-  font-size: 1rem;
-}
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
-.hide {
-  display: none;
-}
+
+/* Loading popup */
 .overlay {
   position: absolute;
   top: 0;
@@ -114,39 +103,48 @@ input[type="number"]::-webkit-outer-spin-button {
     opacity: 1;
   }
 }
-p {
-  color: white;
+/* Table & details popup container */
+.main {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
 }
-.pagination,
-.search-wrapper {
-  display: none;
-}
+/* Table */
 
 table {
   min-width: 80vw;
   margin: 1rem auto;
   table-layout: fixed;
-  background: linear-gradient(
-    90deg,
-    rgba(58, 77, 180, 1) 0%,
-    rgba(221, 228, 35, 1) 51%,
-    rgba(69, 92, 252, 1) 100%
-  );
   border-radius: 10px;
   font-family: "Gentium Plus", serif;
   border-spacing: 0;
   color: #fff;
+  position: relative;
+}
+.table::before {
+  content: "";
+  background-image: url("./maria-ten-rZGmpf1SF6k-unsplash.jpg");
+  background-size: cover;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0.6;
+  border-radius: 10px;
 }
 
 th {
-  font-size: 1.2rem;
+  position: relative;
+  font-size: 1.4rem;
   text-transform: uppercase;
   padding: 0.8rem;
 }
 
 td {
+  position: relative;
   padding: 0.5em;
-  font-size: 1rem;
+  font-size: 1.2rem;
   text-align: center;
   word-wrap: break-word;
 }
@@ -154,25 +152,19 @@ td ion-icon {
   font-size: 40px;
 }
 tr:hover {
-  background-color: rgba(58, 77, 180, 0.1);
+  background-color: #000;
 }
 .small-table {
-  max-width: 300px;
-  font-size: 0.2rem;
   margin: 1rem 0;
-  min-width: 200px;
-  /* display: none; */
+  min-width: 40vw;
+  min-height: 50vh;
 }
-.small-table td {
-  font-size: 0.8rem;
-}
-.small-table th {
-  font-size: 0.8rem;
-}
+
 .small-table.table th:last-child,
 .small-table.table tr td:last-child {
   display: none;
 }
+/*Trash button and checkbox*/
 .delete-details-container {
   display: flex;
   gap: 0.3rem;
@@ -218,25 +210,35 @@ tr:hover {
 .do-not-delete:focus {
   background-color: rgba(0, 0, 0, 0.4);
 }
-a {
-  color: #fff;
-  font-size: 1.5rem;
-  text-decoration: none;
-}
+
 .checkbox {
   width: 1.5em;
   height: 1.5em;
+  accent-color: rgb(224, 217, 12);
 }
+/* Details button */
 .details-popup {
   display: none;
-  background-image: url("/joshua-hoehne-mK8CR5ZphMg-unsplash.jpg");
+  background-image: url("./saksham-gangwar-YVgOh8w1R4s-unsplash.jpg");
   background-size: cover;
-  color: white;
+  background-position: center;
+  color: #fff;
   flex-direction: column;
+  margin: 1rem 0;
+  border-radius: 10px;
+  padding: 1.5rem;
+  gap: 0.5rem;
+  font-size: 1.3rem;
+  min-width: 20vw;
 }
-.main {
-  display: flex;
-  gap: 1rem;
+.details-popup button {
+  border-radius: 10px;
+  font-size: 1.3rem;
+}
+/* Pagination */
+.pagination,
+.search-wrapper {
+  display: none;
 }
 .pagination {
   justify-content: center;
@@ -248,9 +250,15 @@ a {
 .pagination button,
 .pagination input,
 .pagination select {
-  background-color: rgb(251, 249, 208);
+  background-color: rgb(250, 250, 247);
   border-radius: 10px;
   padding: 0.5em 1.5em;
   border: 1px solid #000;
   text-align: center;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }

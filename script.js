@@ -23,6 +23,7 @@ let search;
 let searchValue;
 let detailsToShow;
 
+// Fetch API data
 async function fetchAPI(category) {
   let url = `${BASE_URL}${category}`;
   while (url) {
@@ -33,7 +34,7 @@ async function fetchAPI(category) {
   }
   return allResults;
 }
-
+// Add buttons
 async function addBtns() {
   const response = await fetch(BASE_URL);
   const data = await response.json();
@@ -47,7 +48,7 @@ async function addBtns() {
     buttons.appendChild(btn);
   });
 }
-
+// Render table on button onlclick
 async function btnOnclick(event) {
   category = event.target.innerHTML.toLowerCase();
   document.querySelector(".overlay").classList.add("active");
@@ -134,7 +135,7 @@ async function btnOnclick(event) {
 
   renderTable();
 }
-
+// Render table, display pagination & search
 function renderTable(page = 1) {
   if (page == 1) {
     prevBtn.style.visibility = "hidden";
@@ -225,7 +226,7 @@ function buildTableHead() {
   if (category === "vehicles" || category === "starships") {
     table += `<th>Max atmosphering speed</th>`;
   }
-  // table += `<th>URL</th>`;
+
   table += `<th>Created</th>`;
   table += `<th>Delete/Details</th>`;
 }
@@ -298,75 +299,12 @@ function buildTableBody() {
       table += `<td>${item.max_atmosphering_speed}</td>`;
     }
 
-    // table += `<td>${item.url}</td>`;
     table += `<td>${item.date}</td>`;
     table += `<td><div class="delete-details-container"><input type="checkbox" class="checkbox"/><button class="trashBtn"><ion-icon name="trash-outline"></ion-icon></button>
        <button class="details"><ion-icon name="information-circle-outline"></ion-icon></button></div></td>`;
   });
 }
-
-function searchInput(event) {
-  searchValue = event.target.value.toLowerCase();
-  curPage = 1;
-  renderTable();
-}
-
-const prevBtn = document.querySelector(".prevBtn");
-prevBtn.addEventListener(
-  "click",
-  () => {
-    if (curPage > 1) {
-      curPage--;
-      renderTable(curPage);
-    }
-  },
-  false
-);
-
-const nextBtn = document.querySelector(".nextBtn");
-nextBtn.addEventListener(
-  "click",
-  () => {
-    if (curPage * pageSize < tableData.length) {
-      curPage++;
-      renderTable(curPage);
-    }
-  },
-  false
-);
-function numPages() {
-  numOfPages = Math.ceil(tableData.length / pageSize);
-  return numOfPages;
-}
-
-const typePageNumber = document.querySelector("#type-page-number");
-typePageNumber.addEventListener(
-  "input",
-  (event) => {
-    curPage = event.target.value;
-    if (curPage > 0 && curPage <= numOfPages) {
-      renderTable(curPage);
-    }
-  },
-  false
-);
-
-const selectPageSize = document.querySelector("#select-page-size");
-selectPageSize.addEventListener("change", (event) => {
-  if (selectPageSize.value === "5") {
-    pageSize = 5;
-    renderTable();
-  }
-  if (selectPageSize.value === "10") {
-    pageSize = 10;
-    renderTable();
-  }
-  if (selectPageSize.value === "20") {
-    pageSize = 20;
-    renderTable();
-  }
-});
-
+// Add functionality to delete selected row(s)
 const addDeleteBtnFunctionality = () => {
   let checkboxChecked;
   let rowToBeDeleted;
@@ -406,6 +344,7 @@ const addDeleteBtnFunctionality = () => {
     }
   };
 };
+// Add functionality to show details of selected row(s)
 const addDetailsBtnFunctionality = () => {
   let rowToShowDetails;
 
@@ -413,48 +352,107 @@ const addDetailsBtnFunctionality = () => {
 
   const showDetails = (event) => {
     rowToShowDetails = event.target;
-    // console.log({ rowToShowDetails });
     let th = document.querySelectorAll("th");
     let thArr = Array.from(th);
     let thInnerText = thArr.map((th) => {
       return th.innerText;
     });
-    // console.log({test3});
 
     let findTrToShowDetails = rowToShowDetails.closest("tr");
     let trInnerText = Array.from(findTrToShowDetails.innerText)
       .join("")
       .split("\t");
-    // console.log({ test2 });
 
     document.querySelector("table").classList.add("small-table");
     document.querySelector(".details-popup").style.display = "flex";
+    document.querySelector(".search-wrapper").style.display = "none";
 
-    let combineThAndTr = trInnerText.reduce(
-      (result, field, index) => {
-        result[columns[index]] = field;
-        return result;
-      },
-      [{}]
-    );
-    console.log({ combineThAndTr });
+    let combineThAndTr = {};
+
+    for (let i = 0; i < thInnerText.length - 1; i++) {
+      combineThAndTr[thInnerText[i]] = trInnerText[i];
+    }
+
     detailsToShow = "";
-    // combineThAndTr.forEach((item) => {
-    //   detailsToShow += `<span>${item}</span>`;
-    // });
 
-    // let rowToShowDetailsID=Array.from(test1.innerText)
-    // detailsToShow += `<span>${test1.innerHTML[4]}</span>`;
-    // console.log({rowToShowDetailsID})
+    Object.entries(combineThAndTr).forEach(([key, value]) => {
+      detailsToShow += `<span>${key}: ${value}</span>`;
+    });
+    detailsToShow += `<button class="close-details">Close details</button>`;
 
     document.querySelector(".details-popup").innerHTML = detailsToShow;
-  };
-  [...detailsBtns].forEach((event) => (event.onclick = showDetails));
 
-  const handleCloseDetails = document
-    .querySelector(".close-details")
-    .addEventListener("click", function () {
-      document.querySelector("table").classList.remove("small-table");
-      document.querySelector(".details-popup").style.display = "none";
-    });
+    const handleCloseDetails = document
+      .querySelector(".close-details")
+      .addEventListener("click", function () {
+        document.querySelector("table").classList.remove("small-table");
+        document.querySelector(".details-popup").style.display = "none";
+      });
+  };
+
+  [...detailsBtns].forEach((event) => (event.onclick = showDetails));
 };
+
+// Render table on search
+function searchInput(event) {
+  searchValue = event.target.value.toLowerCase();
+  curPage = 1;
+  renderTable();
+}
+// Add prev and next buttons functionality
+const prevBtn = document.querySelector(".prevBtn");
+prevBtn.addEventListener(
+  "click",
+  () => {
+    if (curPage > 1) {
+      curPage--;
+      renderTable(curPage);
+    }
+  },
+  false
+);
+
+const nextBtn = document.querySelector(".nextBtn");
+nextBtn.addEventListener(
+  "click",
+  () => {
+    if (curPage * pageSize < tableData.length) {
+      curPage++;
+      renderTable(curPage);
+    }
+  },
+  false
+);
+// Count number of pages
+function numPages() {
+  numOfPages = Math.ceil(tableData.length / pageSize);
+  return numOfPages;
+}
+// Add type page number functionality
+const typePageNumber = document.querySelector("#type-page-number");
+typePageNumber.addEventListener(
+  "input",
+  (event) => {
+    curPage = event.target.value;
+    if (curPage > 0 && curPage <= numOfPages) {
+      renderTable(curPage);
+    }
+  },
+  false
+);
+// Add select page size functionality
+const selectPageSize = document.querySelector("#select-page-size");
+selectPageSize.addEventListener("change", (event) => {
+  if (selectPageSize.value === "5") {
+    pageSize = 5;
+    renderTable();
+  }
+  if (selectPageSize.value === "10") {
+    pageSize = 10;
+    renderTable();
+  }
+  if (selectPageSize.value === "20") {
+    pageSize = 20;
+    renderTable();
+  }
+});
