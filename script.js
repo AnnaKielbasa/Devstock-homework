@@ -17,7 +17,7 @@ let table;
 let category;
 let allResults = [];
 let pageSize = 10;
-let curPage = 1;
+let curPage;
 let numOfPages;
 let search;
 let searchValue;
@@ -133,6 +133,7 @@ async function btnOnclick(event) {
     );
   }
 
+  curPage = 1;
   renderTable();
 }
 // Render table, display pagination & search
@@ -303,6 +304,7 @@ function buildTableBody() {
     table += `<td><div class="delete-details-container"><input type="checkbox" class="checkbox"/><button class="trashBtn"><ion-icon name="trash-outline"></ion-icon></button>
        <button class="details"><ion-icon name="information-circle-outline"></ion-icon></button></div></td>`;
   });
+  table += `<span>${tableDataAftersearch.length} results</span><span>Page ${curPage} of ${numOfPages}</span>`;
 }
 // Add functionality to delete selected row(s)
 const addDeleteBtnFunctionality = () => {
@@ -396,7 +398,7 @@ const addDetailsBtnFunctionality = () => {
 // Render table on search
 function searchInput(event) {
   searchValue = event.target.value.toLowerCase();
-  curPage = 1;
+  // curPage = 1;
   renderTable();
 }
 // Add prev and next buttons functionality
