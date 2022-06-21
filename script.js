@@ -22,6 +22,8 @@ let numOfPages;
 let search;
 let searchValue;
 let detailsToShow;
+let id;
+let tableDataAftersearch;
 
 // Fetch API data
 async function fetchAPI(category) {
@@ -30,9 +32,13 @@ async function fetchAPI(category) {
     const response = await fetch(url);
     currentCategoryData = await response.json();
     allResults.push(...currentCategoryData.results);
+    // id = allResults.map((item, index) => index + 1);
+    // console.log({ id });
     url = currentCategoryData.next;
   }
   return allResults;
+  //   id: allResults[index],
+  // };
 }
 // Add buttons
 async function addBtns() {
@@ -232,7 +238,7 @@ function buildTableHead() {
   table += `<th>Delete/Details</th>`;
 }
 function buildTableBody() {
-  const tableDataAftersearch = searchValue
+  tableDataAftersearch = searchValue
     ? tableData.filter((item) => item.name.toLowerCase().includes(searchValue))
     : tableData;
   let filtered = tableDataAftersearch.filter((_, index) => {
@@ -304,7 +310,6 @@ function buildTableBody() {
     table += `<td><div class="delete-details-container"><input type="checkbox" class="checkbox"/><button class="trashBtn"><ion-icon name="trash-outline"></ion-icon></button>
        <button class="details"><ion-icon name="information-circle-outline"></ion-icon></button></div></td>`;
   });
-  table += `<span>${tableDataAftersearch.length} results</span><span>Page ${curPage} of ${numOfPages}</span>`;
 }
 // Add functionality to delete selected row(s)
 const addDeleteBtnFunctionality = () => {
@@ -418,7 +423,7 @@ const nextBtn = document.querySelector(".nextBtn");
 nextBtn.addEventListener(
   "click",
   () => {
-    if (curPage * pageSize < tableData.length) {
+    if (curPage * pageSize < tableDataAftersearch?.length) {
       curPage++;
       renderTable(curPage);
     }
@@ -427,7 +432,14 @@ nextBtn.addEventListener(
 );
 // Count number of pages
 function numPages() {
-  numOfPages = Math.ceil(tableData.length / pageSize);
+  if (tableDataAftersearch) {
+    console.log({ tableDataAftersearch, pageSize });
+    numOfPages = Math.ceil(tableDataAftersearch.length / pageSize);
+  } else {
+    console.log({ tableData, pageSize });
+    numOfPages = Math.ceil(tableData.length / pageSize);
+  }
+
   return numOfPages;
 }
 // Add type page number functionality

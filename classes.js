@@ -10,38 +10,21 @@ export class People extends Base {
 
   constructor(url, name, created, id, gender, birth_year, eye_color) {
     super(url, name, created);
-    // if (
-    //     !film.title ||
-    //     !film.url ||
-    //     !film.director ||
-    //     !film.release_date ||
-    //     !film.episode_id ||
-    //     !film.characters
-    //   ) {
-    //     throw new Error(" Missing required movie info!");
-    //   }
+
     this.gender = gender;
     this.birth_year = birth_year;
     this.eye_color = eye_color;
     this.id = People.count++;
     this.date = created.substring(0, 10);
   }
+  
 }
 export class Planets extends Base {
   static count = 1;
 
   constructor(url, name, created, id, population, climate, terrain) {
     super(url, name, created);
-    // if (
-    //     !film.title ||
-    //     !film.url ||
-    //     !film.director ||
-    //     !film.release_date ||
-    //     !film.episode_id ||
-    //     !film.characters
-    //   ) {
-    //     throw new Error(" Missing required movie info!");
-    //   }
+
     this.population = population;
     this.climate = climate;
     this.terrain = terrain;
@@ -63,16 +46,7 @@ export class Films extends Base {
     producer
   ) {
     super(url, name, created);
-    // if (
-    //     !film.title ||
-    //     !film.url ||
-    //     !film.director ||
-    //     !film.release_date ||
-    //     !film.episode_id ||
-    //     !film.characters
-    //   ) {
-    //     throw new Error(" Missing required movie info!");
-    //   }
+
     this.director = director;
     this.name = title;
     this.opening_crawl = opening_crawl;
@@ -94,16 +68,7 @@ export class Species extends Base {
     average_lifespan
   ) {
     super(url, name, created);
-    // if (
-    //     !film.title ||
-    //     !film.url ||
-    //     !film.director ||
-    //     !film.release_date ||
-    //     !film.episode_id ||
-    //     !film.characters
-    //   ) {
-    //     throw new Error(" Missing required movie info!");
-    //   }
+
     this.language = language;
     this.classification = classification;
     this.average_lifespan = average_lifespan;
@@ -124,16 +89,7 @@ export class Vehicles extends Base {
     max_atmosphering_speed
   ) {
     super(url, name, created);
-    // if (
-    //     !film.title ||
-    //     !film.url ||
-    //     !film.director ||
-    //     !film.release_date ||
-    //     !film.episode_id ||
-    //     !film.characters
-    //   ) {
-    //     throw new Error(" Missing required movie info!");
-    //   }
+
     this.model = model;
     this.passengers = passengers;
     this.max_atmosphering_speed = max_atmosphering_speed;
@@ -154,16 +110,7 @@ export class Starships extends Base {
     max_atmosphering_speed
   ) {
     super(url, name, created);
-    // if (
-    //     !film.title ||
-    //     !film.url ||
-    //     !film.director ||
-    //     !film.release_date ||
-    //     !film.episode_id ||
-    //     !film.characters
-    //   ) {
-    //     throw new Error(" Missing required movie info!");
-    //   }
+
     this.model = model;
     this.passengers = passengers;
     this.max_atmosphering_speed = max_atmosphering_speed;
